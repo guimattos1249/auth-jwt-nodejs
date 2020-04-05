@@ -1,13 +1,15 @@
-const services = require('./services');
 const Boom = require('boom');
 const Validator = require('fastest-validator');
-const jwt = require('jsonwebtoken');
+
+const services = require('./services');
 
 const v = new Validator();
 
 module.exports = {
-  auth: async (req, res) => {
+  create: async (req, res) => {
     const schema = {
+      firstName: {max: 60, min: 5, type: 'string' },
+      lastName: {max: 60, min: 5, type: 'string' },
       email: {max: 255, min: 5, type: 'string' },
       password: {max: 255, min: 5, type: 'string' }
     }
@@ -19,15 +21,8 @@ module.exports = {
       return res.json(Boom.badRequest(null, errors));
     }
 
-    const user = await services.auth(req.body);
+    const user = await services.create(req.body);
 
-    if(user) {
-      res.json({
-        result: jwt.sign({email: user.email}, 'mysecret'),
-      });
-    } else {
-      res.status = 401;
-      res.json({ result: Boom.unauthorized() });
-    }
+    res.json(user);
   }
 }

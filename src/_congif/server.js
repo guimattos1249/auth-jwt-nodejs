@@ -9,6 +9,8 @@ const app = express();
 module.exports = () => {
   applyRoutes(routes);
 
+  app.use(express.json());
+
   app.use(routes);
 
   app.listen(3000, () => {
